@@ -275,7 +275,7 @@ func (s *K8sService) RemoveRoleBindingOfAuthCenterByRoleBinding(rb *rbacv1.RoleB
 			err := s.client.Get(s.ctx, types.NamespacedName{
 				Name: reference.Name,
 			}, auth)
-			if err != nil {
+			if client.IgnoreNotFound(err) != nil {
 				s.log.V(1).Error(err, "K8sService.RemoveRoleBindingOfAuthCenterByRoleBinding get authcenter error", "err", err)
 				return err
 			}

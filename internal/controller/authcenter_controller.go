@@ -41,6 +41,8 @@ type AuthCenterReconciler struct {
 //+kubebuilder:rbac:groups=auth.jiayi.com,resources=authcenters,verbs=get;list;watch;create;update;patch;delete
 //+kubebuilder:rbac:groups=auth.jiayi.com,resources=authcenters/status,verbs=get;update;patch
 //+kubebuilder:rbac:groups=auth.jiayi.com,resources=authcenters/finalizers,verbs=update
+//+kubebuilder:rbac:groups="",resources=namespaces,verbs=get;list;watch;create;update;patch;delete
+//+kubebuilder:rbac:groups="rbac.authorization.k8s.io",resources=*,verbs=*
 
 // Reconcile is part of the main kubernetes reconciliation loop which aims to
 // move the current state of the cluster closer to the desired state.

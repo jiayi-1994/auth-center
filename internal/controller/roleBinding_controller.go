@@ -52,7 +52,6 @@ func (r *RoleBindingReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 func (r *RoleBindingReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&rbacv1.RoleBinding{}, builder.WithPredicates(predicate.NewPredicateFuncs(func(o client.Object) bool {
-			log.Log.Info(o.GetName())
 			for _, ownerReference := range o.GetOwnerReferences() {
 				if ownerReference.Kind == v1.Kind {
 					return true

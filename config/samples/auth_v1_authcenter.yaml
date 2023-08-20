@@ -18,5 +18,7 @@ spec:
   - authType: readonly
     customRb: ""
     namespace: xjy
-
+  - authType: readonly
+    customRb: ""
+    namespace: default
 

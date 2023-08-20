@@ -21,9 +21,10 @@ import (
 	"flag"
 	"os"
 
-	"jiayi.com/auth-center/pkg/config"
 	rbacv1 "k8s.io/api/rbac/v1"
 	"sigs.k8s.io/controller-runtime/pkg/client"
+
+	"jiayi.com/auth-center/pkg/config"
 
 	// Import all Kubernetes client auth plugins (e.g. Azure, GCP, OIDC, etc.)
 	// to ensure that exec-entrypoint and run can make use of them.
@@ -119,6 +120,10 @@ func main() {
 		os.Exit(1)
 	}
 
+	if err = (&authv1.AuthCenter{}).SetupWebhookWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create webhook", "webhook", "AuthCenter")
+		os.Exit(1)
+	}
 	//+kubebuilder:scaffold:builder
 
 	cache := mgr.GetCache()

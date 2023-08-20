@@ -52,7 +52,6 @@ func (r *NamespaceReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 func (r *NamespaceReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&corev1.Namespace{}, builder.WithPredicates(predicate.NewPredicateFuncs(func(o client.Object) bool {
-			log.Log.Info(o.GetName())
 			if util.ContainsString(o.GetFinalizers(), config.FinalizerNsAuthCenter) {
 				return true
 			}
