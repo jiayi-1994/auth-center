@@ -1,0 +1,32 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: manager-role
+rules:
+- apiGroups:
+  - auth.jiayi.com
+  resources:
+  - authcenters
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - auth.jiayi.com
+  resources:
+  - authcenters/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - auth.jiayi.com
+  resources:
+  - authcenters/status
+  verbs:
+  - get
+  - patch
+  - update

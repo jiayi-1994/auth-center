@@ -1,0 +1,22 @@
+apiVersion: auth.jiayi.com/v1
+kind: AuthCenter
+metadata:
+  labels:
+    app.kubernetes.io/name: authcenter
+    app.kubernetes.io/instance: authcenter-sample1
+    app.kubernetes.io/part-of: auth-center
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/created-by: auth-center
+  name: authcenter-sample2
+spec:
+  uid: "1"
+  username: "admin"
+  containerItems:
+  - authType: writable
+    customRb: ""
+    namespace: xjy2
+  - authType: readonly
+    customRb: ""
+    namespace: xjy
+
+

@@ -1,0 +1,27 @@
+# permissions for end users to view authcenters.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/name: clusterrole
+    app.kubernetes.io/instance: authcenter-viewer-role
+    app.kubernetes.io/component: rbac
+    app.kubernetes.io/created-by: auth-center
+    app.kubernetes.io/part-of: auth-center
+    app.kubernetes.io/managed-by: kustomize
+  name: authcenter-viewer-role
+rules:
+- apiGroups:
+  - auth.jiayi.com
+  resources:
+  - authcenters
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - auth.jiayi.com
+  resources:
+  - authcenters/status
+  verbs:
+  - get

@@ -1,0 +1,10 @@
+{
+    "configurations": [
+        {
+            "type": "go",
+            "name": "Go configuration",
+            "goExecPath": "$PROJECT_DIR$\cmd\main.go"
+            "buildParams": []
+        }
+    ]
+}

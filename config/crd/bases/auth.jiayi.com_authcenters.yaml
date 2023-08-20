@@ -1,0 +1,156 @@
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.12.0
+  name: authcenters.auth.jiayi.com
+spec:
+  group: auth.jiayi.com
+  names:
+    categories:
+    - auth
+    kind: AuthCenter
+    listKind: AuthCenterList
+    plural: authcenters
+    shortNames:
+    - ac
+    singular: authcenter
+  scope: Cluster
+  versions:
+  - additionalPrinterColumns:
+    - description: 用户ID 主键
+      jsonPath: .spec.uid
+      name: Uid
+      type: string
+    - description: 用户名 也是 绑定roleBinging中User的名称 也是用于生成kubeconfig字段
+      jsonPath: .spec.username
+      name: Username
+      type: string
+    - description: harbor 绑定的id
+      jsonPath: .spec.harborUid
+      name: HarborUid
+      type: string
+    - description: 状态
+      jsonPath: .status.status
+      name: Status
+      type: string
+    - description: Age for this resource
+      jsonPath: .metadata.creationTimestamp
+      name: Age
+      type: date
+    name: v1
+    schema:
+      openAPIV3Schema:
+        description: AuthCenter is the Schema for the authcenters API
+        properties:
+          apiVersion:
+            description: 'APIVersion defines the versioned schema of this representation
+              of an object. Servers should convert recognized schemas to the latest
+              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+            type: string
+          kind:
+            description: 'Kind is a string value representing the REST resource this
+              object represents. Servers may infer this from the endpoint the client
+              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: AuthCenterSpec defines the desired state of AuthCenter
+            properties:
+              containerItems:
+                items:
+                  properties:
+                    authType:
+                      type: string
+                    customRb:
+                      type: string
+                    namespace:
+                      type: string
+                  type: object
+                type: array
+              harborItems:
+                items:
+                  properties:
+                    projectId:
+                      format: int64
+                      type: integer
+                    roleId:
+                      format: int64
+                      type: integer
+                  type: object
+                type: array
+              harborUid:
+                type: string
+              uid:
+                description: 用户唯一主键id
+                type: string
+              username:
+                type: string
+            required:
+            - uid
+            - username
+            type: object
+          status:
+            description: AuthCenterStatus defines the observed state of AuthCenter
+            properties:
+              conditions:
+                items:
+                  properties:
+                    lastProbeTime:
+                      description: Last time we probed the condition.
+                      format: date-time
+                      type: string
+                    lastTransitionTime:
+                      description: Last time the condition transitioned from one status
+                        to another.
+                      format: date-time
+                      type: string
+                    message:
+                      description: Human-readable message indicating details about
+                        last transition.
+                      type: string
+                    status:
+                      type: boolean
+                    type:
+                      type: string
+                  type: object
+                type: array
+              containerItems:
+                description: 'INSERT ADDITIONAL STATUS FIELD - define observed state
+                  of cluster Important: Run "make" to regenerate code after modifying
+                  this file A list of current conditions of the resource'
+                items:
+                  properties:
+                    authType:
+                      type: string
+                    customRb:
+                      type: string
+                    namespace:
+                      type: string
+                    status:
+                      type: boolean
+                  type: object
+                type: array
+              harborItems:
+                items:
+                  properties:
+                    projectId:
+                      format: int64
+                      type: integer
+                    roleId:
+                      format: int64
+                      type: integer
+                    status:
+                      type: boolean
+                  type: object
+                type: array
+              status:
+                type: string
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
