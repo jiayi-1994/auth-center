@@ -26,6 +26,10 @@ subjects:
 5. 轮询harbor信息，同步到CRD资源中
 6. 使用validate校验用户的权限，如果没有权限，就不允许创建对应的资源 如没有命名空间，或则没有harbor项目
 7. 删除命名空间- 》 会在对应的命名空间添加一个finalizer， 然后watch 命名空间， 如果删除命名空间 则修改对应的AuthCenter资源
+8. harbor 密码需要校验字符数字和大小写长度大于8 ， 如果有加密密码需要能够解密
+9. harbor 校验项目是否存在,不存在则会在mutation时候进行移除
+10. 删除authCenter需要先删除harbor下 member,采用删除harbor用户方式
+11. 每分钟会去轮询harbor用户权限，如果有变化则更新到AuthCenter资源中   删除、添加、修改权限都会同步harbor数据， 删除用户会自动创建用户出来，但是对应的权限会被清空
 
 ## Description
 

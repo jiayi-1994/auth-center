@@ -2,6 +2,6 @@ app:
   name: auth-center
 harbor:
   enable: true
-  Uri: https://192.168.200.100:10043
-  username: admin
+  uri: https://172.31.1.58:10043
+  username: xjy
   password: Harbor12345

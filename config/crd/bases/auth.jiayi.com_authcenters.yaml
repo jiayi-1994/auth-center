@@ -70,6 +70,17 @@ spec:
                       type: string
                   type: object
                 type: array
+              harbor:
+                properties:
+                  encryptPwd:
+                    type: string
+                  harborUid:
+                    type: string
+                  name:
+                    type: string
+                  password:
+                    type: string
+                type: object
               harborItems:
                 items:
                   properties:
@@ -81,8 +92,6 @@ spec:
                       type: integer
                   type: object
                 type: array
-              harborUid:
-                type: string
               uid:
                 description: 用户唯一主键id
                 type: string
@@ -139,6 +148,8 @@ spec:
                     projectId:
                       format: int64
                       type: integer
+                    projectName:
+                      type: string
                     roleId:
                       format: int64
                       type: integer

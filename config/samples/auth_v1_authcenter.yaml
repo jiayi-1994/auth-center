@@ -10,7 +10,7 @@ metadata:
   name: authcenter-sample2
 spec:
   uid: "1"
-  username: "admin"
+  username: ""
   containerItems:
   - authType: writable
     customRb: ""

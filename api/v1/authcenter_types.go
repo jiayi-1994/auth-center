@@ -28,6 +28,7 @@ type ConditionType string
 const (
 	InitNamespaceFinalizer ConditionType = "InitNamespaceFinalizer"
 	ContainersRbacReady    ConditionType = "ContainersRbacReady"
+	InitHarborUser         ConditionType = "InitHarborUser"
 	HarborReady            ConditionType = "HarborReady"
 
 	StatusTypePending StatusType = "Pending"
@@ -54,7 +55,7 @@ type AuthCenterSpec struct {
 	// 用户唯一主键id
 	Uid            string                `json:"uid"`                      // 用户唯一主键id
 	Username       string                `json:"username"`                 // 用户名 也是 绑定roleBinging中User的名称 也是用于生成kubeconfig字段
-	HarborUid      string                `json:"harborUid,omitempty"`      // 用户ID关联的harbor用户ID
+	Harbor         HarborInfo            `json:"harbor,omitempty"`         // harbor信息
 	ContainerItems []ContainerPermission `json:"containerItems,omitempty"` // 容器权限列表
 	HarborItems    []HarborPermission    `json:"harborItems,omitempty"`    // harbor权限列表
 }
@@ -67,6 +68,13 @@ type ContainerPermission struct {
 type HarborPermission struct {
 	ProjectID int64 `json:"projectId,omitempty"` // 项目ID
 	RoleID    int64 `json:"roleId,omitempty"`    // 角色ID 1 个用于项目管理员，2 个用于开发人员，3 个用于来宾，4 个用于维护者
+}
+
+type HarborInfo struct {
+	HarborUid  string `json:"harborUid,omitempty"`  // 用户ID关联的harbor用户ID,  若id为空则进行创建，否则进行密码修改
+	Name       string `json:"name,omitempty"`       // harbor名称
+	Password   string `json:"password,omitempty"`   // harbor密码
+	EncryptPwd string `json:"encryptPwd,omitempty"` // 加密后harbor密码
 }
 
 // AuthCenterStatus defines the observed state of AuthCenter
@@ -85,7 +93,8 @@ type ContainerPermissionStatus struct {
 }
 type HarborPermissionStatus struct {
 	HarborPermission `json:",inline"`
-	Status           bool `json:"status,omitempty"` // 是否成功
+	ProjectName      string `json:"projectName,omitempty"` // 项目名称
+	Status           bool   `json:"status,omitempty"`      // 是否成功
 }
 
 type AuthCondition struct {
@@ -171,7 +180,10 @@ func (auth *AuthCenter) IsUpdateHarbor() bool {
 		return true
 	}
 	if len(auth.Spec.HarborItems) != len(auth.Status.HarborItems) {
-		return false
+		return true
+	}
+	if auth.Spec.Harbor.HarborUid == "" && auth.Spec.Harbor.Name != "" {
+		return true
 	}
 	for _, item := range auth.Spec.HarborItems {
 		flag := false

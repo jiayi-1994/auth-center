@@ -1,0 +1,17 @@
+apiVersion: auth.jiayi.com/v1
+kind: AuthCenter
+metadata:
+  name: authcenter-harbor
+spec:
+  uid: "1"
+  username: "admin"
+  harbor: {
+    "name": "xiejiayi",
+    "password": "Admin@1234"
+  }
+  harborItems:
+  - projectId: 73
+    roleId: 3
+  - projectId: 74
+    roleId: 4
+

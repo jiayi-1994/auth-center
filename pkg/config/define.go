@@ -5,7 +5,9 @@ const (
 	ContainerReadWrite    = "auth:readwrite"
 	Uid                   = "uid"
 	RbName                = "rb-auth-%s"
-	FinalizerContainer    = "container.finalizers"
+	FinalizerAuthCenter   = "authCenter.finalizers"
 	FinalizerHarbor       = "harbor.finalizers"
 	FinalizerNsAuthCenter = "jiayi.com/authcenter"
+
+	HarborEmailFormat = "%s@authCenter.test.com"
 )

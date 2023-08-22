@@ -5,4 +5,4 @@ kind: Kustomization
 images:
 - name: controller
   newName: 172.31.1.58:10043/test/auth-center
-  newTag: "2.0"
+  newTag: "1.2"

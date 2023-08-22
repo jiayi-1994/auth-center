@@ -67,6 +67,7 @@ func (r *AuthCenterReconciler) Reconcile(ctx context.Context, req ctrl.Request) 
 	}
 
 	logger.Info("Start processing ", "authCenter", authCenter)
+	harborService := service.NewHarborService(ctx, logger, &r.Client)
 	// 如果进入删除状态 Finalizers 要先进行删除 第三方相关权限内容，如harbor， k8s资源根据owner 会自动删除
 	if !authCenter.DeletionTimestamp.IsZero() {
 		if len(authCenter.ObjectMeta.Finalizers) == 0 {
@@ -74,6 +75,11 @@ func (r *AuthCenterReconciler) Reconcile(ctx context.Context, req ctrl.Request) 
 		}
 		// TODO remove Harbor
 		if config.AllCfg.Harbor.Enable {
+			err := harborService.DeleteUser(authCenter)
+			if err != nil {
+				logger.Error(err, "delete harbor user error")
+				return ctrl.Result{}, err
+			}
 			authCenter.ObjectMeta.Finalizers = util.DeleteSliceElement(authCenter.ObjectMeta.Finalizers, config.FinalizerHarbor)
 		}
 
@@ -84,16 +90,35 @@ func (r *AuthCenterReconciler) Reconcile(ctx context.Context, req ctrl.Request) 
 		return ctrl.Result{}, nil
 	}
 
-	// 前置处理不通过则进入pending状态 如初始化ns finalizer
+	// 前置处理不通过则进入pending状态 如初始化ns finalizer ， 初始化harbor用户
 	k8sService := service.NewK8sService(ctx, logger, r.Client)
 	operateNum, err := k8sService.AddNsFinalizer(authCenter)
 	if err != nil {
 		logger.Info("add ns finalizer error")
 		r.Record(ctx, authCenter, authv1.InitNamespaceFinalizer, err, authv1.StatusTypePending, logger)
 		return ctrl.Result{}, err
-	} else if operateNum > 0 {
+	} else if operateNum > 0 || authCenter.GetConditionIndexByType(authv1.InitNamespaceFinalizer) == -1 {
 		r.Record(ctx, authCenter, authv1.InitNamespaceFinalizer, err, "", logger)
 		return ctrl.Result{}, nil
+	}
+
+	if config.AllCfg.Harbor.Enable {
+		if isReturn, err := r.AddFinalizers(ctx, authCenter, config.FinalizerHarbor); isReturn || err != nil {
+			return ctrl.Result{}, err
+		}
+
+		isReturn, err := harborService.InitHarborUser(authCenter)
+		if err != nil {
+			logger.Info("init harbor user error")
+			r.Record(ctx, authCenter, authv1.InitHarborUser, err, authv1.StatusTypePending, logger)
+			return ctrl.Result{}, err
+		} else {
+			if isReturn {
+				return ctrl.Result{}, r.Update(ctx, authCenter)
+			} else if authCenter.GetConditionIndexByType(authv1.InitHarborUser) == -1 {
+				r.Record(ctx, authCenter, authv1.InitHarborUser, err, "", logger)
+			}
+		}
 	}
 
 	//处理k8s相关权限
@@ -109,7 +134,13 @@ func (r *AuthCenterReconciler) Reconcile(ctx context.Context, req ctrl.Request) 
 	}
 	//处理harbor相关权限
 	if config.AllCfg.Harbor.Enable {
-		if isReturn, err := r.AddFinalizers(ctx, authCenter, config.FinalizerHarbor); isReturn || err != nil {
+		logger.Info("dealing with harbor permissions start")
+		isHarborUpdate := authCenter.IsUpdateHarbor()
+		auths, err := harborService.ApplyHarborAuth(authCenter)
+		authCenter.Status.HarborItems = auths
+		if isHarborUpdate {
+			logger.Info("dealing with harbor permissions: has update")
+			r.Record(ctx, authCenter, authv1.HarborReady, err, "", logger)
 			return ctrl.Result{}, err
 		}
 	}
