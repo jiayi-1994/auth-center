@@ -26,7 +26,7 @@ func (r *HarborRunnable) Start(ctx context.Context) error {
 		case <-ctx.Done():
 			klog.Infof("HarborRunnable Done")
 			return nil
-		case <-time.After(20 * time.Second):
+		case <-time.After(2 * time.Minute):
 			if err := r.Sync(ctx); err != nil {
 				klog.Errorf("HarborRunnable Sync error:%v", err)
 			}

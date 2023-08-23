@@ -62,16 +62,19 @@ func (r *AuthCenter) Default() {
 		authcenterlog.Error(err, "list all projects error")
 		return
 	}
-	pjs := make([]string, 0)
+	pjs := make([]int64, 0)
 	for _, project := range projects {
-		pjs = append(pjs, goutil.String(project.ProjectID))
+		pjs = append(pjs, int64(project.ProjectID))
 	}
+	authcenterlog.Info("ListAllProjects", "pjs", pjs)
 	// hb项目不存在 则remove
 	items := make([]HarborPermission, 0)
 	for _, item := range r.Spec.HarborItems {
-		if goutil.Contains(pjs, item.ProjectID) {
-			items = append(items, item)
+		if !goutil.Contains(pjs, item.ProjectID) {
+			authcenterlog.Info("project not exist remove", "projectID", item.ProjectID)
+			continue
 		}
+		items = append(items, item)
 	}
 	r.Spec.HarborItems = items
 

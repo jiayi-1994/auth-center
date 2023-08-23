@@ -73,6 +73,14 @@ func (r *AuthCenterReconciler) Reconcile(ctx context.Context, req ctrl.Request) 
 		if len(authCenter.ObjectMeta.Finalizers) == 0 {
 			return ctrl.Result{}, nil
 		}
+		if authCenter.Status.Status != authv1.StatusTerminating {
+			authCenter.Status.Status = authv1.StatusTerminating
+			err = r.Status().Update(ctx, authCenter)
+			if err != nil {
+				return ctrl.Result{}, err
+			}
+		}
+
 		// TODO remove Harbor
 		if config.AllCfg.Harbor.Enable {
 			err := harborService.DeleteUser(authCenter)

@@ -14,4 +14,6 @@ spec:
     roleId: 3
   - projectId: 74
     roleId: 4
+  - projectId: 88
+    roleId: 4
 

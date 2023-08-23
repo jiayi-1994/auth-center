@@ -36,6 +36,7 @@ const (
 	StatusTypeFailed  StatusType = "Failed"
 	StatusTypeRunning StatusType = "Running"
 	StatusTypeUnknown StatusType = "Unknown"
+	StatusTerminating StatusType = "Terminating"
 
 	ReadOnly AuthType = "readonly" //只读
 	Writable AuthType = "writable" //读写
